@@ -9,7 +9,7 @@ dssm_model.compile(optimizer='adam',
 
 dssm_model.load_weights('./checkpoints/my_checkpoint')  # load weights from trained model
 
-main_title = ''
+main_query = ''
 data = []
 with open('testnew.csv') as csvfile:
     csvreader = csv.reader(csvfile)
@@ -17,12 +17,12 @@ with open('testnew.csv') as csvfile:
     for row in csvreader:
         query = [row[3]]
         title = [row[2]]
-        if not main_title:
-            main_title = title
-        if main_title != title:
+        if not main_query:
+            main_query = query
+        if main_query != query:
             print(dssm_model.predict(data))  # predict relevance (range [0;1]) from test data
             data.clear()
-            main_title = title
+            main_query = query
         query_trigram = wtm.sentences_to_bag_of_trigrams(query)
         title_trigram = wtm.sentences_to_bag_of_trigrams(title)
         data.append((query_trigram, title_trigram))

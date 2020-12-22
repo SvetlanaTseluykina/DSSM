@@ -8,25 +8,26 @@ dssm_model = dssm.Dssm()
 
 # applying optimizer and loss function
 dssm_model.compile(optimizer='adam',
-                   loss='binary_crossentropy')
+                   loss='cosine_similarity',
+                   metrics='cosine_similarity')
 
 input_data = []
 target_data = []
-main_title = ''
-with open('train.csv') as csvfile:
+main_query = ''
+with open('trainnew.csv') as csvfile:
     try:
         csvreader = csv.reader(csvfile)
         for row in csvreader:
             query = [row[3]]
             title = [row[2]]
-            if not main_title:
-                main_title = title
-            if main_title != title:  # train model when got all queries for title
+            if not main_query:
+                main_query = query
+            if main_query != query:  # train model when got all queries for title
                 dssm_model.fit(input_data, target_data)
                 input_data.clear()
                 target_data.clear()
                 dssm_model.save_weights('./checkpoints/my_checkpoint')  # save weights of trained model
-                main_title = title
+                main_query = query
             query_trigram = wtm.sentences_to_bag_of_trigrams(query)  # the entry of query of trigrams into dictionary of all trigrams
             title_trigram = wtm.sentences_to_bag_of_trigrams(title)  # the entry of title of trigrams into dictionary of all trigrams
             input_data.append((query_trigram, title_trigram))  # append pair (query, title) to input data
